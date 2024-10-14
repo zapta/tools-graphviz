@@ -1,0 +1,7 @@
+{
+  "name":"tools-graphviz-cad-suite",
+  "description":"graphviz tools",
+  "url":"https://github.com/zapta/tools-graphviz/releases",
+  "version": %VERSION%,
+  "system": [ %SYSTEM% ]
+}
