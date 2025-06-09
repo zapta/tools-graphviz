@@ -1,0 +1,112 @@
+# Daily build and release workflow.
+# The Graphviz version that it picks is sets in build.py.
+
+name: build-and-release
+
+on:
+  # Run on each commit to this repo.
+  push:
+
+  # # Run every day at 2AM.
+  # schedule:
+  #   - cron: '0 2 * * *'
+
+  # Allow manual activations.
+  workflow_dispatch:
+
+permissions:
+  # Allow release creation
+  contents: write
+
+jobs:
+
+  # -- Build packages for all supported architectures and
+  # -- export them in a release.
+  build-and-release:
+
+    runs-on: ubuntu-22.04
+
+    steps:
+
+      # E.g. "2025-11-02"
+      - name: Determine release tag
+        run: |
+          release_tag="$(date +'%Y-%m-%d')"
+          echo $release_tag
+          echo "RELEASE_TAG=$release_tag" >> $GITHUB_ENV
+
+
+      # E.g. "20251102"
+      - name: Determine package tag
+        run: |
+          package_tag="${RELEASE_TAG//-/}"
+          echo $package_tag
+          echo "PACKAGE_TAG=$package_tag" >> $GITHUB_ENV
+
+
+      # Check out the this repo in the workflow work directory.
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+
+      - name: Create build info template file
+        run: |
+          mkdir _work
+          out="_work/BUILD-INFO"
+
+          echo "[apio-build-info]" >> ${out}
+          echo "package = graphviz" >> ${out}
+          echo "time = $(date +'%Y-%m-%d %H:%M:%S %Z')" >> ${out}
+          echo "repo = ${{github.repository}}" >> ${out}
+          echo "workflow = ${{github.workflow}}" >> ${out}
+          echo "run-id = ${{github.run_id}}" >> ${out}
+          echo "run-number = ${{github.run_number}}" >> ${out}
+          echo "release-tag = $RELEASE_TAG" >> ${out}
+          echo "package-tag = $PACKAGE_TAG" >> ${out}
+
+          ls -al
+          cat -n _work/BUILD-INFO
+
+
+      - name: Build package [windows-amd64]
+        run: |
+          python ./build.py \
+              --platform windows-amd64 \
+              --package-tag $PACKAGE_TAG \
+              --build-info-file _work/BUILD-INFO
+
+
+      - name: List packages
+        run: |
+          ls -al _packages/*
+
+
+      - name: Prepare release text
+        run: |
+          out=RELEASE_BODY.txt
+          echo "This is an automated release-and-build of the Apio graphviz package." >> $out
+
+          echo -e "\n<br>\n" >> $out
+
+          echo "BUILD-INFO file:"
+          echo '```' >> $out
+          cat _work/BUILD-INFO >> $out
+          echo '```' >> $out
+
+          echo -e "\n<br>\n" >> $out
+          cat -n $out
+
+
+      # TODO: How to make this fail if any of the files is not uploaded.
+      - name: Create the Release and upload files
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{env.RELEASE_TAG}}
+          name: ${{env.RELEASE_TAG}}
+          body_path: RELEASE_BODY.txt
+          preserve_order: true
+          fail_on_unmatched_files: true
+          files: |
+            _packages/apio-graphviz-windows-amd64-${{env.PACKAGE_TAG}}.tar.gz
+
+
