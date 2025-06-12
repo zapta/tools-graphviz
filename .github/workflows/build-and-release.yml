@@ -59,7 +59,7 @@ jobs:
           echo $package_name
           echo "PACKAGE_NAME=$package_name" >> $GITHUB_ENV
 
-      - name: Create the build-info.json file
+      - name: Create the build info file
         run: |
           cat > build-info.json <<EOF
           {
@@ -115,7 +115,7 @@ jobs:
 
       - name: Copy build info file to _package
         run: |
-          cp build-info.json _package
+          cp build-info.json _package/BUILD-INFO.json
           ls -al _package
 
       - name: Compress the package
