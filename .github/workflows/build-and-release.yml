@@ -63,7 +63,7 @@ jobs:
         run: |
           cat > build-info.json <<EOF
           {
-            "name":  "graphviz",
+            "package-name":  "graphviz",
             "description" : "Graphviz tools for Apio",
             "target-platform": "windows-amd64",
             "release-tag":  "${RELEASE_TAG}",
