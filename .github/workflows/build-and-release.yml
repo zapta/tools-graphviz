@@ -125,6 +125,11 @@ jobs:
           cp build-info.json _package/BUILD-INFO.json
           ls -al _package
 
+      # See https://en.wikipedia.org/wiki/EICAR_test_file
+      # - name: Inject a virus scan test file
+      #   run: |
+      #     echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > _package/eicar.txt
+
       - name: Compress the package
         run: |
           pushd _package
