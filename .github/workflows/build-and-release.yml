@@ -151,7 +151,7 @@ jobs:
           git tag -f ${{env.RELEASE_TAG}}
           git push origin -f ${{env.RELEASE_TAG}}
 
-            # Scans recursively inside the .tgz packages.
+      # Scans recursively inside the .tgz packages.
       # See https://linux.die.net/man/1/clamscan
       - name: Scan the packages for viruses
         run: |
