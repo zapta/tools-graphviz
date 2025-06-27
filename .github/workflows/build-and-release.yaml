@@ -158,7 +158,7 @@ jobs:
 
       # Scans recursively inside the .tgz packages.
       # See https://linux.die.net/man/1/clamscan
-      - name: Scan the packages for viruses
+      - name: Scan the package for viruses
         run: |
           clamscan -r --verbose --scan-archive=yes apio-graphviz-*.tgz
 
