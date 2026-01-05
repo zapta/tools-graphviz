@@ -15,3 +15,9 @@ NOTES:
 ### Versions
 
 * 12.1.2 
+
+## License
+
+The Apio project itself is licensed under the GNU General Public License version 3.0 (GPL-3.0).
+Pre-built packages may include third-party tools and components, which are subject to their
+respective license terms.
